@@ -12,7 +12,7 @@ func main() {
 	var appConfig Config
 
 	flag.StringVar(&appConfig.Host, "host", "", "API Host Address")
-	flag.IntVar(&appConfig.Port, "port", 4000, "API Server Port")
+	flag.IntVar(&appConfig.Port, "port", 4001, "API Server Port")
 	flag.StringVar(&appConfig.Env, "env", "dev", "App deployment environment")
 
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
