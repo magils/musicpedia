@@ -8,6 +8,5 @@ type Track struct {
 	TrackNumber int       `json:"trackNumber"`
 	Duration    int       `json:"duration"`
 	CreatedAt   time.Time `json:"-"`
-	Performer   Performer `json:"performer"`
 	Album       Album     `json:"albumN"`
 }
