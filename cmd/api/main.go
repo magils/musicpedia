@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -11,9 +10,12 @@ import (
 func main() {
 	var appConfig Config
 
-	flag.StringVar(&appConfig.Host, "host", "", "API Host Address")
-	flag.IntVar(&appConfig.Port, "port", 4001, "API Server Port")
-	flag.StringVar(&appConfig.Env, "env", "dev", "App deployment environment")
+	err := appConfig.LoadDotEnvConfig()
+
+	if err := appConfig.LoadDotEnvConfig(); err != nil {
+		slog.Error("Unable to load configuration from .env file. Verify file exists and is correct.")
+		os.Exit(1)
+	}
 
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 
@@ -32,7 +34,7 @@ func main() {
 		"Port", app.config.Port,
 	)
 
-	err := server.ListenAndServe()
+	err = server.ListenAndServe()
 
 	logger.Error(err.Error())
 
