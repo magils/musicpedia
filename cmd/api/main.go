@@ -5,12 +5,17 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"time"
+
+	"com.mgil.musicpedia/internal/db"
+	"com.mgil.musicpedia/internal/models"
 )
 
 func main() {
 	var appConfig Config
 
 	err := appConfig.LoadDotEnvConfig()
+	appConfig.ShowConfigurationValues()
 
 	if err := appConfig.LoadDotEnvConfig(); err != nil {
 		slog.Error("Unable to load configuration from .env file. Verify file exists and is correct.")
@@ -18,9 +23,18 @@ func main() {
 	}
 
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
+	dsn := appConfig.GetDsn()
+	db, err := db.CreateDBConnection(dsn, 5, 5, 10*time.Minute)
+
+	if err != nil {
+		fmt.Println("DB connection error") // TODO: Improve this error handling and logging
+		fmt.Println(err)
+		os.Exit(1)
+	}
 
 	app := &Application{
-		config: appConfig,
+		config:       appConfig,
+		repositories: models.NewRepositories(db),
 	}
 
 	server := &http.Server{

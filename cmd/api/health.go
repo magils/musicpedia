@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	responses "com.mgil.musicpedia/internal"
+	"com.mgil.musicpedia/internal/helpers/responses"
 )
 
 func (app *Application) HealthCheck(w http.ResponseWriter, r *http.Request) {
@@ -13,7 +13,7 @@ func (app *Application) HealthCheck(w http.ResponseWriter, r *http.Request) {
 		"status": "OK",
 	}
 
-	err := responses.WriteJsonResponse(w, statusResponse, http.StatusOK)
+	err := responses.WriteJson(w, statusResponse, http.StatusOK, nil, true)
 
 	if err != nil {
 		errorResponse := map[string]string{
