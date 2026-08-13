@@ -18,10 +18,6 @@ type GenreRepository struct {
 	DB *sql.DB
 }
 
-func (g *GenreRepository) CreateContext() (context.Context, context.CancelFunc) {
-	return context.WithTimeout(context.Background(), 3*time.Second)
-}
-
 func (g *GenreRepository) GetAll() ([]*Genre, error) {
 	query := `
 		SELECT id, name, description
@@ -64,7 +60,7 @@ func (g *GenreRepository) Exists(id int64) (bool, error) {
 	query := `
 		SELECT 1 FROM genres WHERE id = ?
 	`
-	ctx, cancel := g.CreateContext()
+	ctx, cancel := CreateDefaultContext()
 	defer cancel()
 
 	var exists int
@@ -88,7 +84,7 @@ func (g *GenreRepository) Get(id int64) (*Genre, error) {
 		FROM genres
 		WHERE id = ?
 	`
-	ctx, cancel := g.CreateContext()
+	ctx, cancel := CreateDefaultContext()
 	defer cancel()
 
 	var genre Genre
@@ -112,7 +108,7 @@ func (g *GenreRepository) Insert(genre *Genre) error {
 		VALUES (?, ?)
 	`
 	args := []any{genre.Name, genre.Description}
-	ctx, cancel := g.CreateContext()
+	ctx, cancel := CreateDefaultContext()
 
 	defer cancel()
 
@@ -154,7 +150,7 @@ func (g *GenreRepository) Update(id int64, data schemas.GenreUpdateSchema) (*Gen
 		WHERE id = ?
 	`
 	args := []any{existingGenre.Name, existingGenre.Description, id}
-	ctx, cancel := g.CreateContext()
+	ctx, cancel := CreateDefaultContext()
 	defer cancel()
 
 	_, dbErr := g.DB.ExecContext(ctx, query, args...)
@@ -171,7 +167,7 @@ func (g *GenreRepository) Delete(id int64) error {
 		DELETE FROM genres
 		WHERE id = ?
 	`
-	ctx, cancel := g.CreateContext()
+	ctx, cancel := CreateDefaultContext()
 	defer cancel()
 
 	_, err := g.DB.ExecContext(ctx, query, id)
